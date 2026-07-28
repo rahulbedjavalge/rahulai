@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useInView, useMotionValue, useTransform } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type CalculatorForm = {
@@ -103,27 +103,6 @@ const techStack = [
   "n8n",
 ];
 
-const testimonials = [
-  {
-    company: "Northstar Ops",
-    quote:
-      "Rahul translated our AI ambitions into a concrete product and delivery plan that the board could actually approve.",
-    person: "Chief Operating Officer",
-  },
-  {
-    company: "Aurelia Health",
-    quote:
-      "He brought rare balance: strategic thinking, product judgment, and the discipline to ship secure enterprise software.",
-    person: "VP Digital Transformation",
-  },
-  {
-    company: "Arcline Group",
-    quote:
-      "The engagement felt like a partner, not a vendor. We left with a roadmap, a prototype, and confidence to execute.",
-    person: "Founder",
-  },
-];
-
 const insights = [
   {
     title: "The AI operating model for mid-market teams",
@@ -179,35 +158,6 @@ function RevealCard({ children, delay = 0 }: { children: React.ReactNode; delay?
     >
       {children}
     </motion.div>
-  );
-}
-
-function CountUp({ end, suffix = "" }: { end: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
-  const mv = useMotionValue(0);
-  const spring = useSpring(mv, { stiffness: 80, damping: 22 });
-  const rounded = useTransform(spring, (value) => Math.round(value));
-  const [display, setDisplay] = useState("0");
-
-  useEffect(() => {
-    if (inView) {
-      mv.set(end);
-    }
-  }, [end, inView, mv]);
-
-  useEffect(() => {
-    const unsubscribe = rounded.on("change", (value) => {
-      setDisplay(String(value));
-    });
-    return () => unsubscribe();
-  }, [rounded]);
-
-  return (
-    <span ref={ref}>
-      {display}
-      {suffix}
-    </span>
   );
 }
 
@@ -330,18 +280,6 @@ export function HomePage() {
                 </a>
               </div>
 
-              <div className="mt-12 grid gap-4 sm:grid-cols-3">
-                {[
-                  ["25+", "markets reached"],
-                  ["€M", "in automation value unlocked"],
-                  ["6-10w", "typical first delivery wave"],
-                ].map(([value, label]) => (
-                  <div key={label} className="glass-panel rounded-[1.75rem] p-5">
-                    <div className="text-3xl font-semibold tracking-tight">{value}</div>
-                    <div className="mt-1 text-sm text-[var(--muted)]">{label}</div>
-                  </div>
-                ))}
-              </div>
             </motion.div>
 
             <div className="relative mx-auto w-full max-w-xl">
@@ -673,32 +611,6 @@ export function HomePage() {
       <section className="px-6 py-20 sm:px-10 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <SectionHeading
-            eyebrow="Testimonials"
-            title="Client feedback that reflects trust, clarity, and delivery quality."
-            description="Presented like a luxury brand carousel, but built with simple, accessible motion and strong hierarchy."
-          />
-          <div className="mt-14 grid gap-5 lg:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
-              <RevealCard key={testimonial.company} delay={index * 0.05}>
-                <div className="glass-panel h-full rounded-[2rem] p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-semibold">{testimonial.company}</p>
-                      <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">{testimonial.person}</p>
-                    </div>
-                    <div className="h-12 w-12 rounded-full bg-[linear-gradient(135deg,rgba(14,165,233,0.5),rgba(139,92,246,0.45))]" />
-                  </div>
-                  <p className="mt-6 text-lg leading-8 text-[var(--muted)]">“{testimonial.quote}”</p>
-                </div>
-              </RevealCard>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="px-6 py-20 sm:px-10 lg:px-12">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeading
             eyebrow="Insights"
             title="Thought leadership for founders and decision-makers exploring AI adoption."
             description="Latest articles and case studies positioned as useful, high-signal reading rather than generic blog filler."
@@ -745,9 +657,8 @@ export function HomePage() {
               <div className="grid gap-3">
                 {[
                   ["Email", "rahulinberlinn@gmail.com"],
-                  ["LinkedIn", "linkedin.com/in/rahulai"],
-                  ["GitHub", "github.com/rahulai"],
-                  ["Calendly", "calendly.com/rahulai"],
+                  ["LinkedIn", "https://www.linkedin.com/in/rahul-bedjavalge/"],
+                  ["Blog", "https://substack.com/@rahulinberlinn"],
                 ].map(([label, value]) => (
                   <div key={label} className="rounded-[1.5rem] border border-white/10 bg-white/75 px-5 py-4 dark:bg-slate-950/70">
                     <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">{label}</p>
@@ -767,9 +678,9 @@ export function HomePage() {
             <p>AI Product Consultant · Founder · Enterprise Transformation</p>
           </div>
             <div className="flex flex-wrap gap-5">
-            <a href="#services">Services</a>
+            <a href="https://www.linkedin.com/in/rahul-bedjavalge/" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a href="https://substack.com/@rahulinberlinn" target="_blank" rel="noreferrer">Blog</a>
             <a href="#contact">Contact</a>
-            <a href="#global-model">Delivery Model</a>
           </div>
         </div>
       </footer>
