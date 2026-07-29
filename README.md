@@ -40,3 +40,15 @@ npm run lint
 
 - The design is intentionally premium, minimal, and enterprise-oriented rather than agency-style.
 - The world map is rendered with Three.js and the motion language is driven by Framer Motion.
+
+## Environment
+
+This project uses standard Next.js environment variables. Create a `.env.local` in the project root with any keys needed for running locally.
+
+Recommended variables:
+
+- `NEXT_PUBLIC_CALENDLY_URL` — your Calendly booking page (e.g. `https://calendly.com/your-calendar`).
+- `RESEND_API_KEY` — API key for Resend.com to forward contact form submissions to your inbox.
+- `OPENAI_API_KEY` or `OPENROUTER_API_KEY` — if you want server-side AI features enabled (not required).
+
+The app provides a fallback for the AI summarizer when no API key is configured.

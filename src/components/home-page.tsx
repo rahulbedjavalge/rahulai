@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useInView, useMotionValue, useTransform } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
+import ContactForm from "@/components/contact-form";
 
 type CalculatorForm = {
   industry: string;
@@ -239,21 +240,48 @@ export function HomePage() {
         onMouseLeave={parallax.onMouseLeave}
       >
         <div className="mx-auto flex max-w-7xl flex-col gap-12">
-          <header className="flex items-center justify-between gap-6 rounded-full border border-white/10 bg-white/60 px-5 py-3 text-sm backdrop-blur-xl dark:bg-slate-950/55">
-            <div>
-              <p className="font-semibold tracking-[0.22em] uppercase">Rahul</p>
-              <p className="text-xs text-[var(--muted)]">AI Product Consultant · AI Entrepreneur · Founder</p>
+          <header className="sticky top-6 z-40 flex items-center justify-between gap-4 rounded-full border border-white/8 bg-white/55 px-4 py-2 text-sm backdrop-blur-md dark:bg-slate-950/60">
+            <div className="flex items-center gap-4">
+              <div>
+                <p className="font-semibold tracking-[0.18em] uppercase">Rahul</p>
+                <p className="text-xs text-[var(--muted)]">AI Product Consultant</p>
+              </div>
+              <nav className="hidden items-center gap-4 text-xs text-[var(--muted)] md:flex">
+                <a href="#services">Services</a>
+                <a href="#global-model">Process</a>
+                <a href="#contact">Contact</a>
+              </nav>
             </div>
-                    <nav className="hidden items-center gap-6 text-xs text-[var(--muted)] md:flex">
-                      <a href="#services">Services</a>
-                      <a href="#contact">Contact</a>
-                    </nav>
-                    <a
-                      href="mailto:rahulinberlinn@gmail.com"
-                      className="rounded-full bg-slate-950 px-4 py-2 text-xs font-medium text-white shadow-lg shadow-sky-500/20 transition hover:-translate-y-0.5 hover:bg-slate-900 dark:bg-white dark:text-slate-950"
-                    >
-                      Email Rahul
-                    </a>
+            <div className="flex items-center gap-3">
+              <select
+                aria-label="Language"
+                defaultValue={typeof window !== "undefined" ? (navigator.language || "en").slice(0,2) : "en"}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (typeof document !== "undefined") document.documentElement.lang = val;
+                }}
+                className="rounded-full border border-white/10 bg-white/60 px-3 py-1 text-xs outline-none dark:bg-slate-950/55"
+              >
+                <option value="en">EN</option>
+                <option value="de">DE</option>
+              </select>
+
+              <a
+                href={process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/your-calendar"}
+                target="_blank"
+                rel="noreferrer"
+                className="hidden rounded-full bg-sky-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:brightness-105 md:inline-block"
+              >
+                Book a Call
+              </a>
+
+              <a
+                href="#contact"
+                className="rounded-full border border-white/10 bg-white/70 px-3 py-1.5 text-xs font-medium text-slate-950 transition hover:-translate-y-0.5 dark:bg-slate-950/60 dark:text-white"
+              >
+                Send Project Brief
+              </a>
+            </div>
           </header>
 
           <div className="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12">
