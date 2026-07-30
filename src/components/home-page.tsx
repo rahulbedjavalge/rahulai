@@ -1,8 +1,14 @@
 "use client";
 
-import { AnimatePresence, motion, useInView, useMotionValue, useTransform } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import ContactForm from "@/components/contact-form";
+
+const DynamicWorldMap = dynamic(
+  () => import("@/components/world-map").then((mod) => mod.WorldMap),
+  { ssr: false, loading: () => <div className="h-full w-full flex items-center justify-center">Loading map…</div> },
+);
 
 type CalculatorForm = {
   industry: string;
@@ -172,11 +178,6 @@ function GlowingIcon({ index }: { index: number }) {
 }
 
 export function HomePage() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const pointerX = useMotionValue(0);
-  const pointerY = useMotionValue(0);
-  const heroX = useTransform(pointerX, [-0.5, 0.5], [-20, 20]);
-  const heroY = useTransform(pointerY, [-0.5, 0.5], [-20, 20]);
   const [form, setForm] = useState<CalculatorForm>({
     industry: "Professional Services",
     teamSize: "25",
@@ -191,23 +192,7 @@ export function HomePage() {
     timeline: string;
   }>(null);
 
-  const parallax = useMemo(
-    () => ({
-      onMouseMove: (event: React.MouseEvent<HTMLDivElement>) => {
-        if (!heroRef.current) return;
-        const bounds = heroRef.current.getBoundingClientRect();
-        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-        pointerX.set(x);
-        pointerY.set(y);
-      },
-      onMouseLeave: () => {
-        pointerX.set(0);
-        pointerY.set(0);
-      },
-    }),
-    [pointerX, pointerY],
-  );
+  // Parallax removed for a more stable layout and improved accessibility.
 
   const calculateOpportunity = () => {
     const hours = Number(form.hours || 0);
@@ -233,12 +218,7 @@ export function HomePage() {
       <div className="pointer-events-none absolute inset-0 -z-10 noise-layer opacity-35" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[38rem] bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.24),transparent_45%),radial-gradient(circle_at_70%_20%,rgba(139,92,246,0.18),transparent_30%)]" />
 
-      <section
-        ref={heroRef}
-        className="section-shell relative px-6 pb-20 pt-8 sm:px-10 lg:px-12 lg:pb-28 lg:pt-12"
-        onMouseMove={parallax.onMouseMove}
-        onMouseLeave={parallax.onMouseLeave}
-      >
+      <section className="section-shell relative px-6 pb-20 pt-8 sm:px-10 lg:px-12 lg:pb-28 lg:pt-12">
         <div className="mx-auto flex max-w-7xl flex-col gap-12">
           <header className="sticky top-6 z-40 flex items-center justify-between gap-4 rounded-full border border-white/8 bg-white/55 px-4 py-2 text-sm backdrop-blur-md dark:bg-slate-950/60">
             <div className="flex items-center gap-4">
@@ -285,13 +265,9 @@ export function HomePage() {
           </header>
 
           <div className="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12">
-            <motion.div
-              style={{ x: heroX, y: heroY }}
-              className="relative max-w-4xl"
-            >
+            <motion.div className="relative max-w-4xl">
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/65 px-4 py-2 text-xs text-[var(--muted)] backdrop-blur-xl dark:bg-slate-950/55">
                 <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.85)]" />
-                Europe · North America · Middle East · Global Delivery
               </div>
               <h1 className="max-w-4xl text-balance text-[clamp(2.75rem,5.6vw,4.8rem)] font-semibold leading-tight tracking-tight">
                 Building intelligent AI products that transform businesses.
@@ -301,7 +277,7 @@ export function HomePage() {
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <a
-                  href="mailto:rahulinberlinn@gmail.com"
+                  href="mailto:info@rahulai.com"
                   className="rounded-full bg-slate-950 px-6 py-3 text-sm font-medium text-white shadow-[0_10px_40px_rgba(14,165,233,0.2)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_50px_rgba(14,165,233,0.3)] dark:bg-white dark:text-slate-950"
                 >
                   Get in touch
@@ -388,7 +364,19 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Interactive world map removed per request */}
+      <section id="map" className="px-6 py-20 sm:px-10 lg:px-12">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeading
+            eyebrow="Interactive"
+            title="World map"
+            description="Interactive presence map (lazy-loaded)."
+          />
+          <div className="mt-8 h-72 rounded-[1.5rem] overflow-hidden bg-white/5">
+            {/* Lazy-load the heavy Three.js map on client only */}
+            <DynamicWorldMap />
+          </div>
+        </div>
+      </section>
 
       <section id="services" className="px-6 py-20 sm:px-10 lg:px-12">
         <div className="mx-auto max-w-7xl">
@@ -422,34 +410,41 @@ export function HomePage() {
             description="This fast assessment turns operational context into a practical first-pass AI roadmap."
           />
           <div className="mt-14 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-            <div className="glass-panel rounded-[2rem] p-6 sm:p-8">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="grid gap-2 text-sm">
+            <div className="glass-panel calc-left rounded-[2rem] p-6 sm:p-8">
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-[var(--muted)]">Quick assessment</p>
+                <h3 className="mt-3 text-lg font-semibold">Fast AI opportunity calculator</h3>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 mt-6">
+                <label className="form-control text-sm">
                   Industry
                   <select
                     value={form.industry}
                     onChange={(event) => setForm({ ...form, industry: event.target.value })}
-                    className="rounded-2xl border border-white/10 bg-white/70 px-4 py-3 outline-none dark:bg-slate-950/70"
+                    className="form-select"
                   >
                     {industries.map((item) => (
                       <option key={item}>{item}</option>
                     ))}
                   </select>
                 </label>
-                <label className="grid gap-2 text-sm">
+
+                <label className="form-control text-sm">
                   Team Size
                   <input
                     value={form.teamSize}
                     onChange={(event) => setForm({ ...form, teamSize: event.target.value })}
-                    className="rounded-2xl border border-white/10 bg-white/70 px-4 py-3 outline-none dark:bg-slate-950/70"
+                    className="form-input"
                   />
                 </label>
-                <label className="grid gap-2 text-sm">
+
+                <label className="form-control text-sm">
                   Company Size
                   <select
                     value={form.companySize}
                     onChange={(event) => setForm({ ...form, companySize: event.target.value })}
-                    className="rounded-2xl border border-white/10 bg-white/70 px-4 py-3 outline-none dark:bg-slate-950/70"
+                    className="form-select"
                   >
                     {[
                       "Startup",
@@ -461,12 +456,13 @@ export function HomePage() {
                     ))}
                   </select>
                 </label>
-                <label className="grid gap-2 text-sm">
+
+                <label className="form-control text-sm">
                   Current Challenges
                   <select
                     value={form.challenge}
                     onChange={(event) => setForm({ ...form, challenge: event.target.value })}
-                    className="rounded-2xl border border-white/10 bg-white/70 px-4 py-3 outline-none dark:bg-slate-950/70"
+                    className="form-select"
                   >
                     {[
                       "Manual operations",
@@ -478,21 +474,25 @@ export function HomePage() {
                     ))}
                   </select>
                 </label>
-                <label className="grid gap-2 text-sm sm:col-span-2">
+
+                <label className="form-control text-sm sm:col-span-2">
                   Hours spent on repetitive work per month
                   <input
                     value={form.hours}
                     onChange={(event) => setForm({ ...form, hours: event.target.value })}
-                    className="rounded-2xl border border-white/10 bg-white/70 px-4 py-3 outline-none dark:bg-slate-950/70"
+                    className="form-input"
                   />
                 </label>
               </div>
-              <button
-                onClick={calculateOpportunity}
-                className="mt-6 rounded-full bg-slate-950 px-6 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
-              >
-                Calculate
-              </button>
+
+              <div className="mt-6">
+                <button
+                  onClick={calculateOpportunity}
+                  className="primary-btn rounded-full px-6 py-3 text-sm font-medium"
+                >
+                  Calculate
+                </button>
+              </div>
             </div>
 
             <AnimatePresence mode="wait">
@@ -502,31 +502,41 @@ export function HomePage() {
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -18 }}
-                  className="glass-panel rounded-[2rem] p-6 sm:p-8"
+                  className="glass-panel calc-right rounded-[2rem] p-6 sm:p-8"
                 >
-                  <p className="text-xs uppercase tracking-[0.35em] text-[var(--muted)]">Estimated outputs</p>
-                  <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                    {[
-                      results.opportunities,
-                      results.savings,
-                      results.roadmap,
-                      results.timeline,
-                    ].map((item) => (
-                      <div key={item} className="rounded-[1.5rem] border border-white/10 bg-white/70 p-5 dark:bg-slate-950/70">
-                        <p className="text-sm leading-7 text-[var(--muted)]">{item}</p>
-                      </div>
-                    ))}
+                  <div className="grid gap-4 sm:grid-cols-2 w-full">
+                    <div className="stat-card">
+                      <p className="text-sm text-[var(--muted)]">Opportunities</p>
+                      <p className="mt-2 text-lg font-semibold">{results.opportunities}</p>
+                    </div>
+                    <div className="stat-card">
+                      <p className="text-sm text-[var(--muted)]">Estimated savings</p>
+                      <p className="mt-2 text-lg font-semibold">{results.savings}</p>
+                    </div>
+                    <div className="stat-card">
+                      <p className="text-sm text-[var(--muted)]">Roadmap</p>
+                      <p className="mt-2 text-lg font-semibold">{results.roadmap}</p>
+                    </div>
+                    <div className="stat-card">
+                      <p className="text-sm text-[var(--muted)]">Timeline</p>
+                      <p className="mt-2 text-lg font-semibold">{results.timeline}</p>
+                    </div>
                   </div>
-                  <a
-                    href="#contact"
-                    className="mt-6 inline-flex rounded-full bg-cyan-500 px-6 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5"
-                  >
-                    Book Free AI Strategy Session
-                  </a>
+                  <div className="mt-6 flex justify-center">
+                    <a
+                      href="#contact"
+                      className="primary-btn rounded-full px-6 py-3 text-sm font-medium"
+                    >
+                      Book Free AI Strategy Session
+                    </a>
+                  </div>
                 </motion.div>
               ) : (
-                <div className="glass-panel flex min-h-[20rem] items-center justify-center rounded-[2rem] p-6 text-center text-[var(--muted)]">
-                  Run the calculator to reveal opportunities, savings, and a roadmap.
+                <div className="glass-panel calc-right flex items-center justify-center rounded-[2rem] p-6 text-center text-[var(--muted)]">
+                  <div>
+                    <p className="text-lg font-medium">Run the calculator to reveal opportunities, savings, and a roadmap.</p>
+                    <p className="mt-4 text-sm text-[var(--muted)]">Quick snapshot — no signup required.</p>
+                  </div>
                 </div>
               )}
             </AnimatePresence>

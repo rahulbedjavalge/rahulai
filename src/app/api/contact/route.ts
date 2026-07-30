@@ -15,7 +15,7 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           from: 'no-reply@rahulai.com',
-          to: ['rahulinberlinn@gmail.com'],
+          to: ['info@rahulai.com'],
           subject: `New project brief from ${body.name || 'Website'}`,
           html: `<h3>New brief</h3><pre>${JSON.stringify(body, null, 2)}</pre>`,
         }),

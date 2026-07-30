@@ -52,3 +52,16 @@ Recommended variables:
 - `OPENAI_API_KEY` or `OPENROUTER_API_KEY` — if you want server-side AI features enabled (not required).
 
 The app provides a fallback for the AI summarizer when no API key is configured.
+
+## CI & Tests
+
+This repository includes a GitHub Actions workflow that runs lint, build, and tests on pushes and pull requests to `main`.
+
+To run tests locally:
+
+```bash
+npm install
+npm test
+```
+
+The test setup uses Jest with `ts-jest` and React Testing Library. If you add new components that import CSS or static assets, you may need to mock them in tests.

@@ -31,7 +31,7 @@ export default function ContactForm() {
       if (data?.ok) setMessage("Thanks — I received your brief.");
       else setMessage("Submission received (no email delivery configured).");
     } catch (err) {
-      setMessage("Failed to submit. Please email rahulinberlinn@gmail.com");
+      setMessage("Failed to submit. Please email info@rahulai.com");
     } finally {
       setSubmitting(false);
     }
